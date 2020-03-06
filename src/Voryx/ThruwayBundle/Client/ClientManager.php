@@ -4,7 +4,6 @@ namespace Voryx\ThruwayBundle\Client;
 
 use Psr\Log\NullLogger;
 use React\Promise\Deferred;
-use React\Socket\ConnectorInterface;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\Serializer\Serializer;
 use Thruway\ClientSession;
@@ -29,19 +28,16 @@ class ClientManager
     /** @var Serializer */
     private $serializer;
     
-    /** @var ConnectorInterface */
-    private $connector;
 
     /**
      * @param Container $container
      * @param $config
      */
-    public function __construct(Container $container, $config, Serializer $serializer, ConnectorInterface $connector)
+    public function __construct(Container $container, $config, Serializer $serializer)
     {
         $this->container  = $container;
         $this->config     = $config;
         $this->serializer = $serializer;
-        $this->connector  = $connector;
     }
 
     /**
@@ -152,7 +148,7 @@ class ClientManager
     {
         $client = new Client($this->config['realm']);
         $client->setAttemptRetry(false);
-        $client->addTransportProvider(new PawlTransportProvider($this->config['trusted_url'], $this->connector));
+        $client->addTransportProvider(new PawlTransportProvider($this->config['trusted_url']));
 
         return $client;
     }
